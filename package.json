@@ -1,0 +1,31 @@
+{
+  "name": "server-openbike",
+  "version": "1.0.0",
+  "description": "Server containing API REST in Node.JS",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/OpenBike-UFPA/server.git"
+  },
+  "keywords": [
+    "openbike",
+    "sharing",
+    "bike",
+    "station",
+    "system",
+    "free",
+    "opensource"
+  ],
+  "author": "Cleverson Nahum <cleversonahum@gmail.com>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/OpenBike-UFPA/server/issues"
+  },
+  "homepage": "https://github.com/OpenBike-UFPA/server#readme",
+  "dependencies": {
+    "express": "^4.15.2"
+  }
+}
