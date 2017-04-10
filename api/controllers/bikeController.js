@@ -23,5 +23,4 @@ chris.save(function(err) {
 
   console.log('User saved successfully!');
 });
-return "teste";
 }

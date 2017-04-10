@@ -11,8 +11,8 @@ var userSchema = new Schema({
   birthday: {type: String, required: true },
   cep: {type: SchemaTypes.Long, required: true },
   adress: {type: String, required: true },
-  sex: {type: String, required: true },
-  tel: {type: Number, required: true },
+  sex: ['masculino', 'feminino'],
+  tel: {type: SchemaTypes.Long, required: true },
   password: { type: String, required: true },
   bike: { type: String}
 }, { collection: 'users' });
