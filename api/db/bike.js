@@ -5,8 +5,8 @@ var SchemaTypes = mongoose.Schema.Types;
 // create a schema
 var bikeSchema = new Schema({
   	cont: {type: Number, default: 0 },
-  	id_station: {type: Schema.Types.ObjectId, required: true, default: 0 },
-  	id_user: {type: Schema.Types.ObjectId, required: true, default: 0 },
+  	id_station: {type: Schema.Types.ObjectId, default: null },
+  	id_user: {type: Schema.Types.ObjectId, default: null },
   	status: ['funcionando', 'em manutenção']
 }, { collection: 'bikes' });
 

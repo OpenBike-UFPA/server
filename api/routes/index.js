@@ -3,6 +3,7 @@ var router = express.Router();
 var bikeController = require('../controllers/bikeController');
 var stationController = require('../controllers/stationController');
 var loanController = require('../controllers/loanController');
+var userController = require('../controllers/userController');
 
 /* GET home page. */
 // router.get('/', function(req, res, next) {
@@ -16,6 +17,9 @@ router.get('/station/', stationController.addStation);
 
 //Loans HTTP Requests
 router.get('/loans/', loanController.addLoan);
+
+//Users HTTP Requests
+router.get('/users/', userController.addUser);
 
 
 module.exports = router;
