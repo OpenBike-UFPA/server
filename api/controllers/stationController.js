@@ -12,7 +12,7 @@ var chris = new Station({
   geo: {
       lat: 45.6, lng: 20.7
     },
-  bikes: ['58eb68986150f700bd7f273b', '58eb68986150f700bd7f473b', '58eb68986150f700bd7f373b'],
+  bikes: ['58eb68986150f700bd7f273b', '58eb68986150f700bd7f473b', '58eb68986150f700bd7f373b']
 });
 
 
