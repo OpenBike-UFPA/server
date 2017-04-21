@@ -48,7 +48,7 @@ exports.readBike = function(req, res, next) {
 	});
 }
 
-//Function to read all bikes (using limit and skip)
+//Function to read all bikes
 exports.readAllBike = function(req, res, next) {
 	Bike.find({}, function(err, bikes) {
   		if (err) throw err;

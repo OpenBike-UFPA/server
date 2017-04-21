@@ -14,9 +14,9 @@ var userController = require('../controllers/userController');
 	router.put('/bikes/changestatus/', bikeController.changeStatusBike); //Change status Bike
 
 	//GET
-	router.get('/bikes/read/:id', bikeController.readBike); //Read bike by ID
-	router.get('/bikes/read/', bikeController.readAllBike); //Read all bikes
-	router.get('/bikes/read/:limit/:skip', bikeController.readLimitSkipBike); //Read quantity :limit bikes skipping :skip
+	router.get('/bikes/:id', bikeController.readBike); //Read bike by ID
+	router.get('/bikes/', bikeController.readAllBike); //Read all bikes
+	router.get('/bikes/:limit/:skip', bikeController.readLimitSkipBike); //Read quantity :limit bikes skipping :skip
 
 	//DELETE
 	router.delete('/bikes/:id', bikeController.deleteBike); //Delete bike by ID
@@ -36,12 +36,20 @@ router.get('/station/', stationController.addStation);
 	router.get('/loans/user/:id_user', loanController.readUserLoan); //Read loans of a user by ID
 	router.get('/loans/station/:id_station', loanController.readStationLoan); //Read loans of a station by ID
 	router.get('/loans/:id_station/:id_user', loanController.readStationUserLoan); //Read loans of a stations and user by IDs
+	router.get('/loans/', loanController.readAllLoan); //Read all loans
+	router.get('/loans/:limit/:skip', loanController.readLimitSkipLoan); //Read quantity :limit bikes skipping :skip
 
 /////////////////////////////////////////////////////
 
 
 //Users HTTP Requests////////////////////////////////
-router.get('/users/', userController.addUser);
+	//POST
+	router.post('/users/', userController.addUser);
+
+	//GET
+	router.get('/users/:id', userController.readUser); //Read user by ID
+	router.get('/users/', userController.readAllUser); //Read all users
+	router.get('/users/:limit/:skip', userController.readLimitSkipUser); //Read quantity :limit bikes 
 /////////////////////////////////////////////////////
 
 module.exports = router;

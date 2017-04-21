@@ -13,7 +13,7 @@ var stationSchema = new Schema({
   geo: {
       lat: Number, lng: Number
     },
-  bikes: [Schema.Types.ObjectId]
+  bikes: {type: [Schema.Types.ObjectId], required: true}
 }, { collection: 'stations' });
 
 var Station = mongoose.model('Station', stationSchema);

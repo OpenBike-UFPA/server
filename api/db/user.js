@@ -5,16 +5,16 @@ var SchemaTypes = mongoose.Schema.Types;
 
 // create a schema
 var userSchema = new Schema({
-  _id: {type: String, required: true },
+  _id: { type: String, required: true },
   name: { type: String, required: true },
   email: {type: String, required: true },
   birthday: {type: String, required: true },
   cep: {type: SchemaTypes.Long, required: true },
-  adress: {type: String, required: true },
+  address: {type: String, required: true },
   sex: ['masculino', 'feminino'],
   tel: {type: SchemaTypes.Long, required: true },
   password: { type: String, required: true },
-  bike: { type: String}
+  bike: {type: Schema.Types.ObjectId, default: null }
 }, { collection: 'users' });
 
 var User = mongoose.model('User', userSchema);
