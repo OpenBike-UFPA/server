@@ -1,19 +1,80 @@
+var Bike = require('../db/bike'); //Schema Bike
+
+//Function add a new bike
 exports.addBike = function(req, res, next) {
-// if our user.js file is at app/models/user.js
-var Bike = require('../db/bike');
-  
-// create a new user called chris
-var chris = new Bike({
-  id_station: '4edd40c86762e0fb12000003',
-  id_user: '4edd40c86762e0fb12000003',
-  status: 'funcionando'
-  });
 
+	var newBike = new Bike({
+		id_station: req.body.id_station,
+  		id_user: req.body.id_user,
+  		status: req.body.status
+  	});
 
-// call the built-in save method to save to the database
-chris.save(function(err) {
+	// adding new bike to DB
+	newBike.save(function(err) {
+  	if (err) throw err;
+
+  	console.log('Bike saved successfully!');
+	});
+
+	return res.json(newBike);
+}
+
+//Function change status bike
+exports.changeStatusBike = function(req, res, next) {
+
+	Bike.findById(req.body.id, function(err, bike) {
+  		if (err) throw err;
+
+  		bike.status = req.body.status;
+
+  		// save changes in bike
+  		bike.save(function(err) {
+    	if (err) throw err;
+
+    	console.log('Bike status successfully updated');
+  		});
+	});
+
+	return res.json('Status bike changed to ' + req.body.status);
+}
+
+//Function to read bike by ID
+exports.readBike = function(req, res, next) {
+	Bike.findById(req.params.id, function(err, bike) {
+  		if (err) throw err;
+
+  		console.log(bike);
+  		return res.json(bike);
+	});
+}
+
+//Function to read all bikes (using limit and skip)
+exports.readAllBike = function(req, res, next) {
+	Bike.find({}, function(err, bikes) {
+  		if (err) throw err;
+
+  		console.log(bikes);
+  		return res.json(bikes);
+	});
+}
+
+//Function to read quantity of bikes determined and skipping some values (using limit and skip)
+exports.readLimitSkipBike = function(req, res, next) {
+	Bike.find({}, function(err, bikes) {
+  		if (err) throw err;
+
+  		console.log(bikes);
+  		return res.json(bikes);
+	}).limit(parseInt(req.params.limit)).skip(parseInt(req.params.skip));
+}
+
+//Function to delete bike by ID
+exports.deleteBike = function(req, res, next) {
+  Bike.findByIdAndRemove(req.params.id, function(err) {
   if (err) throw err;
 
-  console.log('Bike saved successfully!');
+  // we have deleted the user
+  console.log('Bike deleted');
+  return res.json("Bike deleted");
 });
 }

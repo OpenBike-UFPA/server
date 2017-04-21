@@ -5,21 +5,43 @@ var stationController = require('../controllers/stationController');
 var loanController = require('../controllers/loanController');
 var userController = require('../controllers/userController');
 
-/* GET home page. */
-// router.get('/', function(req, res, next) {
-//   res.render('index', { title: 'Express' });
-// });
-//Bikes HTTP Requests
-router.get('/bikes/', bikeController.addBike);
 
-//Stations HTTP Requests
+//Bikes HTTP Requests////////////////////////////////
+	//POST
+	router.post('/bikes/', bikeController.addBike); //Add Bike
+
+	//PUT
+	router.put('/bikes/changestatus/', bikeController.changeStatusBike); //Change status Bike
+
+	//GET
+	router.get('/bikes/read/:id', bikeController.readBike); //Read bike by ID
+	router.get('/bikes/read/', bikeController.readAllBike); //Read all bikes
+	router.get('/bikes/read/:limit/:skip', bikeController.readLimitSkipBike); //Read quantity :limit bikes skipping :skip
+
+	//DELETE
+	router.delete('/bikes/:id', bikeController.deleteBike); //Delete bike by ID
+/////////////////////////////////////////////////////
+
+
+//Stations HTTP Requests////////////////////////////////
 router.get('/station/', stationController.addStation);
+/////////////////////////////////////////////////////
 
-//Loans HTTP Requests
-router.get('/loans/', loanController.addLoan);
 
-//Users HTTP Requests
+//Loans HTTP Requests////////////////////////////////
+	//POST
+	router.post('/loans/', loanController.addLoan); //Add a new loan
+
+	//GET
+	router.get('/loans/user/:id_user', loanController.readUserLoan); //Read loans of a user by ID
+	router.get('/loans/station/:id_station', loanController.readStationLoan); //Read loans of a station by ID
+	router.get('/loans/:id_station/:id_user', loanController.readStationUserLoan); //Read loans of a stations and user by IDs
+
+/////////////////////////////////////////////////////
+
+
+//Users HTTP Requests////////////////////////////////
 router.get('/users/', userController.addUser);
-
+/////////////////////////////////////////////////////
 
 module.exports = router;

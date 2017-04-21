@@ -1,20 +1,54 @@
+var Loan = require('../db/loan'); //Schema Loan
+
+//Fucntion add new loans or devolutions
 exports.addLoan = function(req, res, next) {
-// if our user.js file is at app/models/user.js
-var Loan = require('../db/loan');
-  
-// create a new user called chris
-var chris = new Loan({
-  date: Date(),
-  type: 'devolução',
-  id_user: '4edd40c86762e0fb12000003',
-  id_station: '4edd40c86762e0fb12000003'
+	
+	var newLoan = new Loan({
+  		date: Date(),
+  		type: req.body.type,
+  		id_user: req.body.id_user,
+  		id_station: req.body.id_station
   	});
 
+	//Adding new Loan to DB
+	newLoan.save(function(err) {
+  	if (err) throw err;
 
-// call the built-in save method to save to the database
-chris.save(function(err) {
-  if (err) throw err;
+  	console.log('loan saved successfully!');
+	});
 
-  console.log('loan saved successfully!');
-});
+	return res.json(newLoan);
+}
+
+//Read loans of a user by ID
+exports.readUserLoan = function(req, res, next) {
+	Loan.find({"id_user":req.params.id_user}, function(err, loans) {
+  		if (err) throw err;
+
+  		console.log(loans);
+  		return res.json(loans);
+	});
+
+}
+
+//Read loans of a station by ID
+exports.readStationLoan = function(req, res, next) {
+	Loan.find({"id_station":req.params.id_station}, function(err, loans) {
+  		if (err) throw err;
+
+  		console.log(loans);
+  		return res.json(loans);
+	});
+
+}
+
+//Read loans of a station and user by IDs
+exports.readStationUserLoan = function(req, res, next) {
+	Loan.find({"id_station":req.params.id_station, "id_user":req.params.id_user}, function(err, loans) {
+  		if (err) throw err;
+
+  		console.log(loans);
+  		return res.json(loans);
+	});
+
 }
