@@ -82,6 +82,6 @@ exports.deleteUser = function(req, res, next) {
 
   // we have deleted the user
   console.log('User deleted');
-  return res.json("Bike ID "+ req.params.id + "deleted");
+  return res.json("Bike ID "+ req.params.id + " deleted");
 });
 }
