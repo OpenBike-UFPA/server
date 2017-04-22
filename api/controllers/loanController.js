@@ -1,13 +1,15 @@
 var Loan = require('../db/loan'); //Schema Loan
+var ObjectId = require('mongoose').Types.ObjectId; //Type Object ID
 
 //Fucntion add new loans or devolutions
 exports.addLoan = function(req, res, next) {
 	
 	var newLoan = new Loan({
-  		//date: Date(),
   		type: req.body.type,
   		id_user: req.body.id_user,
-  		id_station: req.body.id_station
+      id_bike: req.body.id_bike,
+  		id_station: req.body.id_station,
+      n_slot: req.body.n_slot
   	});
 
 	//Adding new Loan to DB
@@ -16,6 +18,55 @@ exports.addLoan = function(req, res, next) {
 
   	console.log('loan saved successfully!');
 	});
+
+
+    //updating registry in bike model////////////////
+    var Bike = require('../db/bike'); //Schema Bike 
+    Bike.findById(new ObjectId(req.body.id_bike), function(err, bike) {
+      if (err) throw err;
+      bike.id_user = req.body.type=="empréstimo" ? req.body.id_user : null;
+      bike.id_station = req.body.type=="empréstimo" ? req.body.id_station : null;
+      // save update in bike
+      bike.save(function(err) {
+        if (err) throw err;
+        console.log("bike updated in bike");
+      });
+
+    });
+    /////////////////////////////////////////////////
+
+    //updating registry in user model////////////////
+    var User = require('../db/user');
+
+    User.findById(req.body.id_user, function(err, user) {
+      if (err) throw err;
+
+      user.id_bike = req.body.type=="empréstimo" ? req.body.id_bike : null;
+
+      // save update in user
+      user.save(function(err) {
+        if (err) throw err;
+        console.log("bike updated in user");
+      });
+
+    });
+    /////////////////////////////////////////////////
+
+    //updating registry in station model////////////////
+    var Station = require('../db/station');
+
+    Station.findById(new ObjectId(req.body.id_station), function(err, station) {
+      if (err) throw err;
+      station.bikes[parseInt(req.body.n_slot) - 1] = req.body.type=="empréstimo" ? req.body.id_bike : null;
+      console.log(station);
+      // save update in user
+      station.save(function(err) {
+        if (err) throw err;
+        console.log("bike updated in user");
+      });
+
+    });
+    /////////////////////////////////////////////////
 
 	return res.json(newLoan);
 }

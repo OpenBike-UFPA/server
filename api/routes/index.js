@@ -24,7 +24,9 @@ var userController = require('../controllers/userController');
 
 
 //Stations HTTP Requests////////////////////////////////
-router.get('/station/', stationController.addStation);
+	//POST
+	router.post('/stations/', stationController.addStation);
+	
 /////////////////////////////////////////////////////
 
 

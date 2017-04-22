@@ -1,25 +1,38 @@
-exports.addStation = function(req, res, next) {
-// if our user.js file is at app/models/user.js
 var Station = require('../db/station');
+
+//Adding new station
+exports.addStation = function(req, res, next) {
   
-// create a new user called chris
-var chris = new Station({
-  name: 'PCT - Guamá',
-  q_slots: 5,
-  adress: 'teste',
-  cep: 657746367,
-  status: 'online',
-  geo: {
-      lat: 45.6, lng: 20.7
+  var newStation = new Station({
+    name: req.body.name,
+    q_slots: req.body.q_slots,
+    address: req.body.address,
+    cep: req.body.cep,
+    status: req.body.status,
+    geo: {
+        lat: req.body.geo.lat, lng: req.body.geo.lng
     },
-  bikes: ['58eb68986150f700bd7f273b', '58eb68986150f700bd7f473b', '58eb68986150f700bd7f373b']
-});
+    bikes: req.body.bikes
+  });
 
 
-// call the built-in save method to save to the database
-chris.save(function(err) {
+  // call the built-in save method to save to the database
+  newStation.save(function(err) {
+    if (err) throw err;
+
+    console.log('Station saved successfully!');
+  });
+
+  return res.json(newStation);
+}
+
+//Delete a station by ID
+exports.deleteStation = function(req, res, next) {
+  Station.findByIdAndRemove(req.params.id, function(err) {
   if (err) throw err;
 
-  console.log('Station saved successfully!');
+  // we have deleted the user
+  console.log('Station deleted');
+  return res.json("Station deleted");
 });
 }

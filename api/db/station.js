@@ -7,7 +7,7 @@ var SchemaTypes = mongoose.Schema.Types;
 var stationSchema = new Schema({
   name: { type: String, required: true },
   q_slots: {type: Number, required: true },
-  adress: {type: String, required: true },
+  address: {type: String, required: true },
   cep: {type: SchemaTypes.Long, required: true },
   status: ['online', 'offline', 'em manutenção'],
   geo: {
