@@ -4,7 +4,7 @@ var Loan = require('../db/loan'); //Schema Loan
 exports.addLoan = function(req, res, next) {
 	
 	var newLoan = new Loan({
-  		date: Date(),
+  		//date: Date(),
   		type: req.body.type,
   		id_user: req.body.id_user,
   		id_station: req.body.id_station

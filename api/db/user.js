@@ -14,7 +14,8 @@ var userSchema = new Schema({
   sex: ['masculino', 'feminino'],
   tel: {type: SchemaTypes.Long, required: true },
   password: { type: String, required: true },
-  bike: {type: Schema.Types.ObjectId, default: null }
+  bike: {type: Schema.Types.ObjectId, default: null },
+  date: {type: Date, default: Date, required: true}
 }, { collection: 'users' });
 
 var User = mongoose.model('User', userSchema);
