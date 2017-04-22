@@ -27,7 +27,7 @@ exports.readAllLoan = function(req, res, next) {
 
       console.log(loans);
       return res.json(loans);
-  });
+  }).sort({date: -1});
 }
 
 //Function to read quantity of loans determined and skipping some values (using limit and skip)
@@ -37,7 +37,7 @@ exports.readLimitSkipLoan = function(req, res, next) {
 
       console.log(loans);
       return res.json(loans);
-  }).limit(parseInt(req.params.limit)).skip(parseInt(req.params.skip));
+  }).limit(parseInt(req.params.limit)).skip(parseInt(req.params.skip)).sort({date: -1});
 }
 
 //Read loans of a user by ID
@@ -58,7 +58,7 @@ exports.readStationLoan = function(req, res, next) {
 
   		console.log(loans);
   		return res.json(loans);
-	});
+	}).sort({date: -1});
 
 }
 
@@ -69,6 +69,6 @@ exports.readStationUserLoan = function(req, res, next) {
 
   		console.log(loans);
   		return res.json(loans);
-	});
+	}).sort({date: -1});
 
 }

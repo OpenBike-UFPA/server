@@ -62,7 +62,7 @@ exports.readAllUser = function(req, res, next) {
 
       console.log(users);
       return res.json(users);
-  });
+  }).sort({name: 1});
 }
 
 //Function to read quantity of users determined and skipping some values (using limit and skip)
@@ -72,7 +72,7 @@ exports.readLimitSkipUser = function(req, res, next) {
 
       console.log(users);
       return res.json(users);
-  }).limit(parseInt(req.params.limit)).skip(parseInt(req.params.skip));
+  }).limit(parseInt(req.params.limit)).skip(parseInt(req.params.skip)).sort({name: 1});
 }
 
 //Function to delete user by ID

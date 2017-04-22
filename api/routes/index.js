@@ -50,6 +50,9 @@ router.get('/station/', stationController.addStation);
 	router.get('/users/:id', userController.readUser); //Read user by ID
 	router.get('/users/', userController.readAllUser); //Read all users
 	router.get('/users/:limit/:skip', userController.readLimitSkipUser); //Read quantity :limit bikes 
+
+	//DELETE
+	router.delete('/users/:id', userController.deleteUser); //Delete user by ID
 /////////////////////////////////////////////////////
 
 module.exports = router;
