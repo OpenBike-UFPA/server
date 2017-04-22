@@ -74,3 +74,14 @@ exports.readLimitSkipUser = function(req, res, next) {
       return res.json(users);
   }).limit(parseInt(req.params.limit)).skip(parseInt(req.params.skip));
 }
+
+//Function to delete user by ID
+exports.deleteUser = function(req, res, next) {
+  User.findByIdAndRemove(req.params.id, function(err) {
+  if (err) throw err;
+
+  // we have deleted the user
+  console.log('User deleted');
+  return res.json("Bike ID "+ req.params.id + "deleted");
+});
+}
