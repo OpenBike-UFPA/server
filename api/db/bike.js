@@ -7,7 +7,8 @@ var bikeSchema = new Schema({
   	cont: {type: Number, default: 0 },
   	id_station: {type: Schema.Types.ObjectId, default: null },
   	id_user: {type: String, default: null },
-  	status: ['funcionando', 'manutenção']
+  	status: ['funcionando', 'manutenção'],
+    slot: {type: Number, required: true }
 }, { collection: 'bikes' });
 
 var Bikes = mongoose.model('Bikes', bikeSchema);

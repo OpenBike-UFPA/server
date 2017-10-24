@@ -10,17 +10,19 @@ var users = require('./routes/users');
 
 /////////////////////////////////////////////
 /* if it will use password
-var options = { db: { native_parser: true }  
+var options = { db: { native_parser: true }
   , server: { poolSize: 5 }
   , replset: { rs_name: 'myReplicaSetName' }
   , user: 'myUserName'
   , pass: 'myPassword'
 }
-mongoose.connect(uri, options); */ 
+mongoose.connect(uri, options); */
 var uri = 'mongodb://mongo-ob/openbike';
 mongoose.Promise = global.Promise;
 mongoose.connect(uri);
 ////////////////////////////////////////////
+
+
 
 var app = express();
 

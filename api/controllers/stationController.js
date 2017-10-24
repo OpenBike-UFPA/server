@@ -2,7 +2,7 @@ var Station = require('../db/station');
 
 //Adding new station
 exports.addStation = function(req, res, next) {
-  
+
   var newStation = new Station({
     name: req.body.name,
     q_slots: req.body.q_slots,
@@ -35,4 +35,13 @@ exports.deleteStation = function(req, res, next) {
   console.log('Station deleted');
   return res.json("Station deleted");
 });
+}
+
+exports.readAllStations = function(req, res, next) {
+	Station.find({}, function(err, stations) {
+  		if (err) throw err;
+
+  		console.log(stations);
+  		return res.json(stations);
+	});
 }

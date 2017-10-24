@@ -1,9 +1,13 @@
 var Loan = require('../db/loan'); //Schema Loan
 var ObjectId = require('mongoose').Types.ObjectId; //Type Object ID
 
-//Fucntion add new loans or devolutions
-exports.addLoan = function(req, res, next) {
-	
+//Mqtt parameters
+var mqtt = require('mqtt');
+var client  = mqtt.connect('mqtt://192.168.1.3');
+
+//Fucntion add new loans
+exports.loan = function(req, res, next) {
+
 	var newLoan = new Loan({
   		type: req.body.type,
   		id_user: req.body.id_user,
@@ -21,11 +25,11 @@ exports.addLoan = function(req, res, next) {
 
 
     //updating registry in bike model////////////////
-    var Bike = require('../db/bike'); //Schema Bike 
+    var Bike = require('../db/bike'); //Schema Bike
     Bike.findById(new ObjectId(req.body.id_bike), function(err, bike) {
       if (err) throw err;
       bike.id_user = req.body.type=="empréstimo" ? req.body.id_user : null;
-      bike.id_station = req.body.type=="empréstimo" ? req.body.id_station : null;
+      bike.id_station = req.body.type=="empréstimo" ? null : req.body.id_station;
       // save update in bike
       bike.save(function(err) {
         if (err) throw err;
@@ -68,7 +72,87 @@ exports.addLoan = function(req, res, next) {
     });
     /////////////////////////////////////////////////
 
+	////MQTT//////
+	client.publish('/openbike/ufpa/station/loan/', newLoan.n_slot.toString());
 	return res.json(newLoan);
+}
+
+//Fucntion add new devolutions
+exports.devolution = function(id_bike, id_station, n_slot) {
+	var temp_id_user;
+
+	//Finding id_user
+	var Bike = require('../db/bike'); //Schema Bike
+	Bike.findById(new ObjectId(id_bike), function(err, bike) {
+      if (err) throw err;
+	  temp_id_user = bike.id_user.toString();
+	  console.log("new loan aaaaaaaaa "+ temp_id_user);
+    });
+
+	var newLoan = new Loan({
+  		type: 'devolução',
+  		id_user: '02793587257',
+      	id_bike: id_bike,
+  		id_station: id_station,
+      	n_slot: n_slot
+  	});
+	console.log(newLoan);
+
+	//Adding new Loan to DB
+	newLoan.save(function(err) {
+  	if (err) throw err;
+
+  	console.log('Devolution saved successfully!');
+	});
+
+
+    //updating registry in bike model////////////////
+    var Bike = require('../db/bike'); //Schema Bike
+    Bike.findById(new ObjectId(id_bike), function(err, bike) {
+      if (err) throw err;
+      bike.id_user = null;
+      bike.id_station = id_station;
+      // save update in bike
+      bike.save(function(err) {
+        if (err) throw err;
+        console.log("bike updated in bike");
+      });
+
+    });
+    /////////////////////////////////////////////////
+
+    //updating registry in user model////////////////
+    var User = require('../db/user');
+
+    User.findById(temp_id_user, function(err, user) {
+      if (err) throw err;
+
+      user.id_bike = null;
+
+      // save update in user
+      user.save(function(err) {
+        if (err) throw err;
+        console.log("bike updated in user");
+      });
+
+    });
+    /////////////////////////////////////////////////
+
+    //updating registry in station model////////////////
+    var Station = require('../db/station');
+
+    Station.findById(new ObjectId(id_station), function(err, station) {
+      if (err) throw err;
+      station.bikes[parseInt(n_slot) - 1] = null;
+      console.log(station);
+      // save update in user
+      station.save(function(err) {
+        if (err) throw err;
+        console.log("bike updated in user");
+      });
+
+    });
+    /////////////////////////////////////////////////
 }
 
 //Function to read all loans

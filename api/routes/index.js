@@ -26,13 +26,17 @@ var userController = require('../controllers/userController');
 //Stations HTTP Requests////////////////////////////////
 	//POST
 	router.post('/stations/', stationController.addStation);
-	
+	//GET
+	router.get('/stations', stationController.readAllStations);
+	//DELETE
+	router.delete('/stations/', stationController.deleteStation); //Delete user by ID
+
 /////////////////////////////////////////////////////
 
 
 //Loans HTTP Requests////////////////////////////////
 	//POST
-	router.post('/loans/', loanController.addLoan); //Add a new loan
+	router.post('/loans/', loanController.loan); //Add a new loan
 
 	//GET
 	router.get('/loans/user/:id_user', loanController.readUserLoan); //Read loans of a user by ID
@@ -51,7 +55,7 @@ var userController = require('../controllers/userController');
 	//GET
 	router.get('/users/:id', userController.readUser); //Read user by ID
 	router.get('/users/', userController.readAllUser); //Read all users
-	router.get('/users/:limit/:skip', userController.readLimitSkipUser); //Read quantity :limit bikes 
+	router.get('/users/:limit/:skip', userController.readLimitSkipUser); //Read quantity :limit bikes
 
 	//DELETE
 	router.delete('/users/:id', userController.deleteUser); //Delete user by ID
