@@ -5,8 +5,9 @@ exports.addBike = function(req, res, next) {
 
 	var newBike = new Bike({
 		id_station: req.body.id_station,
-  		id_user: req.body.id_user,
-  		status: req.body.status
+  		id_user: null,
+  		status: req.body.status,
+		slot: req.body.slot
   	});
 
 	// adding new bike to DB
@@ -16,7 +17,23 @@ exports.addBike = function(req, res, next) {
   	console.log('Bike saved successfully!');
 	});
 
+	//Adding bike on station slot
+	var Station = require('../db/station');
+	Station.findById(req.body.id_station, function(err, station) {
+		if (err) throw err;
+		console.log(station.bikes);
+		station.bikes[parseInt(req.body.slot) - 1] = req.body.id_station;
+		console.log(station);
+		// save update in user
+		station.save(function(err) {
+	  		if (err) throw err;
+	  			console.log("bike updated in station");
+		});
+		console.log(station);
+	});
+
 	return res.json(newBike);
+
 }
 
 //Function change status bike
