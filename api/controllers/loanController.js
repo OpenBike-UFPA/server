@@ -3,7 +3,8 @@ var ObjectId = require('mongoose').Types.ObjectId; //Type Object ID
 
 //Mqtt parameters
 var mqtt = require('mqtt');
-var client  = mqtt.connect('mqtt://192.168.1.3');
+var client  = mqtt.connect('mqtt://192.168.1.4');
+
 
 //Fucntion add new loans
 exports.loan = function(req, res, next) {
@@ -79,80 +80,149 @@ exports.loan = function(req, res, next) {
 
 //Fucntion add new devolutions
 exports.devolution = function(id_bike, id_station, n_slot) {
+	var async = require('async');
 	var temp_id_user;
 
 	//Finding id_user
 	var Bike = require('../db/bike'); //Schema Bike
-	Bike.findById(new ObjectId(id_bike), function(err, bike) {
-      if (err) throw err;
-	  temp_id_user = bike.id_user.toString();
-	  console.log("new loan aaaaaaaaa "+ temp_id_user);
+	var newLoan;
+
+
+
+	async.series([
+        function(callback) {
+			Bike.findById(new ObjectId(id_bike), function(err, bike) {
+		      if (err) throw err;
+			  temp_id_user = bike.id_user.toString();
+			  console.log("new loan aaaaaaaaa "+ temp_id_user);
+		  	});
+			setTimeout(callback, 10);
+        },
+        //Load posts (won't be called before task 1's "task callback" has been called)
+        function(callback) {
+			newLoan = new Loan({
+				type: 'devolução',
+			  	id_user: temp_id_user,
+			    id_bike: id_bike,
+			  	id_station: id_station,
+			    n_slot: n_slot
+			});
+
+			console.log(newLoan);
+
+			//Adding new Loan to DB
+			newLoan.save(function(err) {
+		  	if (err) throw err;
+
+		  	console.log('Devolution saved successfully!');
+			});
+
+			//updating registry in bike model////////////////
+		    var Bike = require('../db/bike'); //Schema Bike
+		    Bike.findById(new ObjectId(id_bike), function(err, bike) {
+		      if (err) throw err;
+		      bike.id_user = null;
+		      bike.id_station = id_station;
+		      // save update in bike
+		      bike.save(function(err) {
+		        if (err) throw err;
+		        console.log("bike updated in bike");
+		      });
+
+		    });
+		    /////////////////////////////////////////////////
+
+		    //updating registry in user model////////////////
+		    var User = require('../db/user');
+
+		    User.findById(temp_id_user, function(err, user) {
+		      if (err) throw err;
+
+		      user.id_bike = null;
+
+		      // save update in user
+		      user.save(function(err) {
+		        if (err) throw err;
+		        console.log("bike updated in user");
+		      });
+
+		    });
+		    /////////////////////////////////////////////////
+
+		    //updating registry in station model////////////////
+		    var Station = require('../db/station');
+
+		    Station.findById(new ObjectId(id_station), function(err, station) {
+		      if (err) throw err;
+		      station.bikes[parseInt(n_slot) - 1] = null;
+		      console.log(station);
+		      // save update in user
+		      station.save(function(err) {
+		        if (err) throw err;
+		        console.log("bike updated in user");
+		      });
+
+		    });
+        }
+    	], function(err) { //This function gets called after the two tasks have called their "task callbacks"
+        if (err) return next(err);
     });
 
-	var newLoan = new Loan({
-  		type: 'devolução',
-  		id_user: '02793587257',
-      	id_bike: id_bike,
-  		id_station: id_station,
-      	n_slot: n_slot
-  	});
-	console.log(newLoan);
-
-	//Adding new Loan to DB
-	newLoan.save(function(err) {
-  	if (err) throw err;
-
-  	console.log('Devolution saved successfully!');
-	});
-
-
-    //updating registry in bike model////////////////
-    var Bike = require('../db/bike'); //Schema Bike
-    Bike.findById(new ObjectId(id_bike), function(err, bike) {
-      if (err) throw err;
-      bike.id_user = null;
-      bike.id_station = id_station;
-      // save update in bike
-      bike.save(function(err) {
-        if (err) throw err;
-        console.log("bike updated in bike");
-      });
-
-    });
-    /////////////////////////////////////////////////
-
-    //updating registry in user model////////////////
-    var User = require('../db/user');
-
-    User.findById(temp_id_user, function(err, user) {
-      if (err) throw err;
-
-      user.id_bike = null;
-
-      // save update in user
-      user.save(function(err) {
-        if (err) throw err;
-        console.log("bike updated in user");
-      });
-
-    });
-    /////////////////////////////////////////////////
-
-    //updating registry in station model////////////////
-    var Station = require('../db/station');
-
-    Station.findById(new ObjectId(id_station), function(err, station) {
-      if (err) throw err;
-      station.bikes[parseInt(n_slot) - 1] = null;
-      console.log(station);
-      // save update in user
-      station.save(function(err) {
-        if (err) throw err;
-        console.log("bike updated in user");
-      });
-
-    });
-    /////////////////////////////////////////////////
+	// //Adding new Loan to DB
+	// newLoan.save(function(err) {
+  	// if (err) throw err;
+    //
+  	// console.log('Devolution saved successfully!');
+	// });
+	//
+	//
+    // //updating registry in bike model////////////////
+    // var Bike = require('../db/bike'); //Schema Bike
+    // Bike.findById(new ObjectId(id_bike), function(err, bike) {
+    //   if (err) throw err;
+    //   bike.id_user = null;
+    //   bike.id_station = id_station;
+    //   // save update in bike
+    //   bike.save(function(err) {
+    //     if (err) throw err;
+    //     console.log("bike updated in bike");
+    //   });
+	//
+    // });
+    // /////////////////////////////////////////////////
+	//
+    // //updating registry in user model////////////////
+    // var User = require('../db/user');
+	//
+    // User.findById(temp_id_user, function(err, user) {
+    //   if (err) throw err;
+	//
+    //   user.id_bike = null;
+	//
+    //   // save update in user
+    //   user.save(function(err) {
+    //     if (err) throw err;
+    //     console.log("bike updated in user");
+    //   });
+	//
+    // });
+    // /////////////////////////////////////////////////
+	//
+    // //updating registry in station model////////////////
+    // var Station = require('../db/station');
+	//
+    // Station.findById(new ObjectId(id_station), function(err, station) {
+    //   if (err) throw err;
+    //   station.bikes[parseInt(n_slot) - 1] = null;
+    //   console.log(station);
+    //   // save update in user
+    //   station.save(function(err) {
+    //     if (err) throw err;
+    //     console.log("bike updated in user");
+    //   });
+	//
+    // });
+    // /////////////////////////////////////////////////
 }
 
 //Function to read all loans

@@ -15,6 +15,7 @@ exports.addBike = function(req, res, next) {
   	if (err) throw err;
 
   	console.log('Bike saved successfully!');
+	console.log(newBike);
 	});
 
 	//Adding bike on station slot
@@ -23,13 +24,13 @@ exports.addBike = function(req, res, next) {
 		if (err) throw err;
 		console.log(station.bikes);
 		station.bikes[parseInt(req.body.slot) - 1] = req.body.id_station;
-		console.log(station);
+		console.log("Isso AQUI" + station);
 		// save update in user
 		station.save(function(err) {
 	  		if (err) throw err;
 	  			console.log("bike updated in station");
+				console.log(station);
 		});
-		console.log(station);
 	});
 
 	return res.json(newBike);
