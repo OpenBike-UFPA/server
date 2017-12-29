@@ -20,6 +20,14 @@ exports.addBike = function(req, res, next) {
 
 	//Adding bike on station slot
 	var Station = require('../db/station');
+	Station.findByIdAndUpdate(req.body.id_station, {$push:{bikes:{_id:req.body.slot, bike: newBike._id}}},
+	 function(err, station) {
+		if (err) throw err;
+
+		console.log("bike updated in station");
+		});
+
+
 	Station.findById(req.body.id_station, function(err, station) {
 		if (err) throw err;
 		console.log(station.bikes);

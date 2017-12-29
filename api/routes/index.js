@@ -29,7 +29,7 @@ var userController = require('../controllers/userController');
 	//GET
 	router.get('/stations', stationController.readAllStations);
 	//DELETE
-	router.delete('/stations/', stationController.deleteStation); //Delete user by ID
+	router.delete('/stations/:id', stationController.deleteStation); //Delete station by ID
 
 /////////////////////////////////////////////////////
 

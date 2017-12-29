@@ -5,7 +5,7 @@ var SchemaTypes = mongoose.Schema.Types;
 
 // create a schema
 var stationSchema = new Schema({
-  name: { type: String, required: true },
+  name: { type: String, required: true, unique : true },
   q_slots: {type: Number, required: true },
   address: {type: String, required: true },
   cep: {type: SchemaTypes.Long, required: true },
@@ -13,7 +13,12 @@ var stationSchema = new Schema({
   geo: {
       lat: Number, lng: Number
     },
-  bikes: {type: [Schema.Types.ObjectId], required: true}
+  bikes: [
+            {
+            _id: {type: Number, unique : true}, //Slot number
+            bike: {type: Schema.Types.ObjectId, unique : true}
+            }
+        ]
 }, { collection: 'stations' });
 
 var Station = mongoose.model('Station', stationSchema);
