@@ -14,7 +14,7 @@ var userSchema = new Schema({
   sex: ['masculino', 'feminino'],
   tel: {type: SchemaTypes.Long, required: true },
   password: { type: String, required: true },
-  id_bike: {type: Schema.Types.ObjectId, default: null },
+  id_bike: {type: String, default: null },
   date: {type: Date, default: Date, required: true}
 }, { collection: 'users' });
 

@@ -3,7 +3,7 @@ var ObjectId = require('mongoose').Types.ObjectId; //Type Object ID
 
 //Mqtt parameters
 var mqtt = require('mqtt');
-var client  = mqtt.connect('mqtt://192.168.1.4');
+var client  = mqtt.connect('ws://iot.eclipse.org:80/ws');
 
 
 //Fucntion add new loans
@@ -27,7 +27,7 @@ exports.loan = function(req, res, next) {
 
     //updating registry in bike model////////////////
     var Bike = require('../db/bike'); //Schema Bike
-    Bike.findById(new ObjectId(req.body.id_bike), function(err, bike) {
+    Bike.findById(req.body.id_bike, function(err, bike) {
       if (err) throw err;
       bike.id_user = req.body.type=="empréstimo" ? req.body.id_user : null;
       bike.id_station = req.body.type=="empréstimo" ? null : req.body.id_station;
@@ -86,9 +86,9 @@ exports.devolution = function(id_bike, id_station, n_slot) {
 
 	async.series([
         function(callback) {
-			Bike.findById(new ObjectId(id_bike), function(err, bike) {
+			Bike.findById(id_bike, function(err, bike) {
 		      if (err) throw err;
-			  temp_id_user = bike.id_user.toString();
+			  temp_id_user = bike.id_user;
 			  console.log("new loan aaaaaaaaa "+ temp_id_user);
 		  	});
 			setTimeout(callback, 10);
@@ -114,7 +114,7 @@ exports.devolution = function(id_bike, id_station, n_slot) {
 
 			//updating registry in bike model////////////////
 		    var Bike = require('../db/bike'); //Schema Bike
-		    Bike.findById(new ObjectId(id_bike), function(err, bike) {
+		    Bike.findById(id_bike, function(err, bike) {
 		      if (err) throw err;
 		      bike.id_user = null;
 		      bike.id_station = id_station;

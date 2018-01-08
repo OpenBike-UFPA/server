@@ -92,12 +92,12 @@ function onListening() {
 
 //MQTT Subscriber
 var mqtt = require('mqtt');
-var client  = mqtt.connect('mqtt://192.168.1.6');
+var client  = mqtt.connect('ws://iot.eclipse.org:80/ws');
 
 //Subscribing topics
 client.on('connect', function () {
     console.log('Conectado');
-  client.subscribe('/openbike/ufpa/+/devolution/+');
+  client.subscribe('/openbike/ufpa/+/devolution2/+');
 });
 
 //Receiving Messages
@@ -105,12 +105,12 @@ client.on('message', function (topic, message) {
     var loanController = require('../controllers/loanController');
     //Bikes topics
         var res = topic.split("/", 6);
-        if (res[5]=='devolution') {
-
+        if (res[4]=='devolution2') {
+                id_bike = message.toString();
+                id_station = res[3];
+                n_slot = res[5];
+                console.log(id_bike + "         "+id_station+"         "+n_slot);
+                    loanController.devolution(id_bike, id_station, n_slot);
         }
-        //console.log(res);
-        //console.log('58f93fd0d35231006e4c749c');//message.toString());
-    loanController.devolution('59f5fbde58b13501871df8c2', '5a45d58758d40806e85f5cae', '1');
-
 
 });
