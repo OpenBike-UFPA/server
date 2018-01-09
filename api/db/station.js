@@ -16,7 +16,7 @@ var stationSchema = new Schema({
   bikes: [
             {
             _id: {type: Number, unique : true}, //Slot number
-            bike: {type: Schema.Types.ObjectId, unique : true}
+            bike: {type: String, unique : true}
             }
         ]
 }, { collection: 'stations' });
