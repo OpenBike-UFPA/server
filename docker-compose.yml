@@ -1,0 +1,37 @@
+version: '3'
+
+services:
+  mongo-ob:
+    image: mongo
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    networks:
+     - openbike
+
+  mosca-ob:
+    image: matteocollina/mosca
+    restart: unless-stopped
+    ports:
+      - "1883:1883"
+    networks:
+     - openbike
+
+  server-ob:
+    image: node
+    depends_on:
+      - mongo-ob
+      - mosca-ob
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    volumes:
+      - "./api/:/server/"
+    working_dir: /server
+    command: npm start
+    networks:
+     - openbike
+
+networks:
+  openbike:
+    driver: bridge
