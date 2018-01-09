@@ -3,7 +3,7 @@ var ObjectId = require('mongoose').Types.ObjectId; //Type Object ID
 
 //Mqtt parameters
 var mqtt = require('mqtt');
-var client  = mqtt.connect('ws://iot.eclipse.org:80/ws');
+var client  = mqtt.connect('mqtt://mosca-ob');
 
 
 //Fucntion add new loans

@@ -28,20 +28,6 @@ exports.addBike = function(req, res, next) {
 		console.log("bike updated in station");
 		});
 
-
-	// Station.findById(req.body.id_station, function(err, station) {
-	// 	if (err) throw err;
-	// 	console.log(station.bikes);
-	// 	station.bikes[parseInt(req.body.slot) - 1] = req.body.id_station;
-	// 	console.log("Isso AQUI" + station);
-	// 	// save update in user
-	// 	station.save(function(err) {
-	//   		if (err) throw err;
-	//   			console.log("bike updated in station");
-	// 			console.log(station);
-	// 	});
-	// });
-
 	return res.json(newBike);
 
 }
