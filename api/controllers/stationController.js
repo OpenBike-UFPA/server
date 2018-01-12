@@ -16,7 +16,7 @@ exports.addStation = function(req, res, next) {
   });
 
   for(i=1;i<=newStation.q_slots;i++)
-    newStation.bike.push({"_id": i, "bike": null})
+    newStation.bikes.push({"_id": i, "bike": null})
     
   // call the built-in save method to save to the database
   newStation.save(function(err) {
