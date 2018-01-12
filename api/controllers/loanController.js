@@ -16,7 +16,7 @@ exports.loan = function(req, res, next) {
   		id_station: req.body.id_station,
       n_slot: req.body.n_slot
   	});
-
+	console.log(newLoan);
 	//Adding new Loan to DB
 	newLoan.save(function(err) {
   	if (err) throw err;
@@ -67,6 +67,14 @@ exports.loan = function(req, res, next) {
   		console.log("bike updated in station");
 		});
     ///////////////////////////////////////////////
+	//Adding null bike in station
+	Station.findByIdAndUpdate(id_station, {$push:{bikes:{_id:req.body.n_slot, bike: null}}},
+	 function(err, station) {
+		if (err) throw err;
+
+		console.log("bike updated in station");
+		});
+	///////////////////////////////////////////////
 
 	////MQTT//////
 	client.publish('/openbike/ufpa/station/loan/', newLoan.n_slot.toString());
@@ -147,16 +155,26 @@ exports.devolution = function(id_bike, id_station, n_slot) {
 		    //updating registry in station model////////////////
 		    var Station = require('../db/station');
 
+			//Removing null bike from station
+			Station.findByIdAndUpdate(req.body.id_station, {$pull:{bikes:{_id:req.body.n_slot, bike: req.body.id_bike}}},
+			 function(err, station) {
+		  		if (err) throw err;
+
+		  		console.log("bike updated in station");
+				});
+		    ///////////////////////////////////////////////
+			//Adding bike returned to station
 			Station.findByIdAndUpdate(id_station, {$push:{bikes:{_id:n_slot, bike: id_bike}}},
 			 function(err, station) {
 		  		if (err) throw err;
 
 		  		console.log("bike updated in station");
 				});
-        }
-    	], function(err) { //This function gets called after the two tasks have called their "task callbacks"
-        if (err) return next(err);
-    });
+			//////////////////////////////////////////////
+        	}
+    		], function(err) { //This function gets called after the two tasks have called their "task callbacks"
+        		if (err) return next(err);
+    		});
 
 }
 

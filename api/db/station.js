@@ -8,7 +8,7 @@ var stationSchema = new Schema({
   name: { type: String, required: true, unique : true },
   q_slots: {type: Number, required: true },
   address: {type: String, required: true },
-  cep: {type: SchemaTypes.Long, required: true },
+  cep: {type: String, required: true },
   status: ['online', 'offline', 'em manutenção'],
   geo: {
       lat: Number, lng: Number
