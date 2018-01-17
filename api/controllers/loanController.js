@@ -8,77 +8,93 @@ var client  = mqtt.connect('mqtt://mosca-ob');
 
 //Fucntion add new loans
 exports.loan = function(req, res, next) {
-
+	var async = require('async');
 	var newLoan = new Loan({
-  		type: req.body.type,
-  		id_user: req.body.id_user,
-      id_bike: req.body.id_bike,
-  		id_station: req.body.id_station,
-      n_slot: req.body.n_slot
-  	});
-	console.log(newLoan);
-	//Adding new Loan to DB
-	newLoan.save(function(err) {
-  	if (err) throw err;
-
-  	console.log('loan saved successfully!');
+		type: req.body.type,
+		id_user: req.body.id_user,
+		id_bike: req.body.id_bike,
+		id_station: req.body.id_station,
+		n_slot: req.body.n_slot
 	});
+	async.series([
+        function(callback) {
 
+		console.log(newLoan);
+		//Adding new Loan to DB
+		newLoan.save(function(err) {
+	  	if (err) throw err;
 
-    //updating registry in bike model////////////////
-    var Bike = require('../db/bike'); //Schema Bike
-    Bike.findById(req.body.id_bike, function(err, bike) {
-      if (err) throw err;
-      bike.id_user = req.body.type=="empréstimo" ? req.body.id_user : null;
-      bike.id_station = req.body.type=="empréstimo" ? null : req.body.id_station;
-      // save update in bike
-      bike.save(function(err) {
-        if (err) throw err;
-        console.log("bike updated in bike");
-      });
-
-    });
-    /////////////////////////////////////////////////
-
-    //updating registry in user model////////////////
-    var User = require('../db/user');
-
-    User.findById(req.body.id_user, function(err, user) {
-      if (err) throw err;
-
-      user.id_bike = req.body.type=="empréstimo" ? req.body.id_bike : null;
-
-      // save update in user
-      user.save(function(err) {
-        if (err) throw err;
-        console.log("bike updated in user");
-      });
-
-    });
-    /////////////////////////////////////////////////
-
-    //updating registry in station model////////////////
-    var Station = require('../db/station');
-	//Removing bike from station
-	Station.findByIdAndUpdate(req.body.id_station, {$pull:{bikes:{_id:req.body.n_slot, bike: req.body.id_bike}}},
-	 function(err, station) {
-  		if (err) throw err;
-
-  		console.log("bike updated in station");
+	  	console.log('loan saved successfully!');
 		});
-    ///////////////////////////////////////////////
-	//Adding null bike in station
-	Station.findByIdAndUpdate(id_station, {$push:{bikes:{_id:req.body.n_slot, bike: null}}},
-	 function(err, station) {
-		if (err) throw err;
 
-		console.log("bike updated in station");
-		});
-	///////////////////////////////////////////////
 
-	////MQTT//////
-	client.publish('/openbike/ufpa/station/loan/', newLoan.n_slot.toString());
-	return res.json(newLoan);
+	    //updating registry in bike model////////////////
+	    var Bike = require('../db/bike'); //Schema Bike
+	    Bike.findById(req.body.id_bike, function(err, bike) {
+	      if (err) throw err;
+	      bike.id_user = req.body.type=="empréstimo" ? req.body.id_user : null;
+	      bike.id_station = req.body.type=="empréstimo" ? null : req.body.id_station;
+	      // save update in bike
+	      bike.save(function(err) {
+	        if (err) throw err;
+	        console.log("bike updated in bike");
+	      });
+
+	    });
+	    /////////////////////////////////////////////////
+
+	    //updating registry in user model////////////////
+	    var User = require('../db/user');
+
+	    User.findById(req.body.id_user, function(err, user) {
+	      if (err) throw err;
+
+	      user.id_bike = req.body.type=="empréstimo" ? req.body.id_bike : null;
+
+	      // save update in user
+	      user.save(function(err) {
+	        if (err) throw err;
+	        console.log("bike updated in user");
+	      });
+
+	    });
+	    /////////////////////////////////////////////////
+
+	    //updating registry in station model////////////////
+	    var Station = require('../db/station');
+		//Removing bike from station
+		Station.findByIdAndUpdate(req.body.id_station, {$pull:{bikes:{_id:req.body.n_slot, bike: req.body.id_bike}}},
+		 function(err, station) {
+	  		if (err) throw err;
+
+	  		console.log("bike removed in station");
+			});
+	    ///////////////////////////////////////////////
+
+	    setTimeout(callback, 10);
+        },
+        //Load posts (won't be called before task 1's "task callback" has been called)
+        function(callback) {
+		var Station = require('../db/station');
+		//Adding null bike in station
+		Station.findByIdAndUpdate(req.body.id_station, {$push:{bikes:{_id:req.body.n_slot, bike: null}}},
+		 function(err, station) {
+			if (err) throw err;
+
+			console.log("bike updated in station");
+			});
+		///////////////////////////////////////////////
+
+		////MQTT//////
+		client.publish('/openbike/ufpa/station/loan/', newLoan.n_slot.toString());
+
+        	}
+    		], function(err) { //This function gets called after the two tasks have called their "task callbacks"
+        		if (err) return next(err);
+    		});
+		return res.json("Loan added");
+
+
 }
 
 //Fucntion add new devolutions
@@ -99,6 +115,16 @@ exports.devolution = function(id_bike, id_station, n_slot) {
 			  temp_id_user = bike.id_user;
 			  console.log("new loan aaaaaaaaa "+ temp_id_user);
 		  	});
+
+			var Station = require('../db/station');
+			//Removing null bike from station
+			Station.findByIdAndUpdate(id_station, {$pull:{bikes:{_id:n_slot}}},
+			 function(err, station) {
+		  		if (err) throw err;
+
+		  		console.log("bike deleted in station");
+				});
+		    ///////////////////////////////////////////////
 			setTimeout(callback, 10);
         },
         //Load posts (won't be called before task 1's "task callback" has been called)
@@ -155,14 +181,7 @@ exports.devolution = function(id_bike, id_station, n_slot) {
 		    //updating registry in station model////////////////
 		    var Station = require('../db/station');
 
-			//Removing null bike from station
-			Station.findByIdAndUpdate(req.body.id_station, {$pull:{bikes:{_id:req.body.n_slot, bike: req.body.id_bike}}},
-			 function(err, station) {
-		  		if (err) throw err;
 
-		  		console.log("bike updated in station");
-				});
-		    ///////////////////////////////////////////////
 			//Adding bike returned to station
 			Station.findByIdAndUpdate(id_station, {$push:{bikes:{_id:n_slot, bike: id_bike}}},
 			 function(err, station) {
